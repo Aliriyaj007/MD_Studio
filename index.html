@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MD Studio</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+    <script src="https://unpkg.com/turndown/dist/turndown.js"></script>
+    <script src="https://unpkg.com/turndown-plugin-gfm/dist/turndown-plugin-gfm.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+
+    <style>
+        /* --- CSS Variables & Theming --- */
+        :root {
+            --bg-body: #f3f4f6;
+            --bg-paper: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --border: #e5e7eb;
+            --toolbar-bg: #ffffff;
+            --code-bg: #f8fafc;
+            --table-border: #d1d5db;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --header-height: 70px;
+        }
+
+        /* [Dark Themes and other color variants remain unchanged as requested] */
+        [data-theme="dark"] { --bg-body: #111827; --bg-paper: #1f2937; --text-primary: #f9fafb; --text-secondary: #9ca3af; --accent: #60a5fa; --accent-hover: #3b82f6; --border: #374151; --toolbar-bg: #1f2937; --code-bg: #111827; --table-border: #4b5563; }
+        [data-theme="dracula"] { --bg-body: #282a36; --bg-paper: #44475a; --text-primary: #f8f8f2; --text-secondary: #bd93f9; --accent: #ff79c6; --accent-hover: #bd93f9; --border: #6272a4; --toolbar-bg: #44475a; --code-bg: #282a36; --table-border: #6272a4; }
+        [data-theme="solarized"] { --bg-body: #fdf6e3; --bg-paper: #eee8d5; --text-primary: #073642; --text-secondary: #586e75; --accent: #d33682; --accent-hover: #dc322f; --border: #93a1a1; --toolbar-bg: #eee8d5; --code-bg: #fdf6e3; --table-border: #93a1a1; }
+        [data-theme="midnight"] { --bg-body: #0f172a; --bg-paper: #1e293b; --text-primary: #e2e8f0; --text-secondary: #94a3b8; --accent: #38bdf8; --accent-hover: #0ea5e9; --border: #334155; --toolbar-bg: #1e293b; --code-bg: #0f172a; --table-border: #475569; }
+        [data-theme="forest"] { --bg-body: #202b25; --bg-paper: #2e3b32; --text-primary: #e8f5e9; --text-secondary: #a5d6a7; --accent: #66bb6a; --accent-hover: #4caf50; --border: #435b48; --toolbar-bg: #2e3b32; --code-bg: #1b241d; --table-border: #435b48; }
+        [data-theme="cyberpunk"] { --bg-body: #000000; --bg-paper: #120024; --text-primary: #00ffea; --text-secondary: #bd00ff; --accent: #ff0055; --accent-hover: #ff2a6d; --border: #bd00ff; --toolbar-bg: #120024; --code-bg: #050505; --table-border: #00ffea; }
+
+        /* --- Reset & Layout --- */
+        * { box-sizing: border-box; transition: background-color 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s; }
+        
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse-animation { animation: pulse 0.4s ease-in-out; }
+
+        /* --- Header --- */
+        header {
+            height: var(--header-height);
+            background-color: var(--bg-paper);
+            padding: 0 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        /* --- Main Content (Mobile First) --- */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            gap: 10px;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Responsive Toolbar */
+        .toolbar {
+            background: var(--toolbar-bg);
+            padding: 8px;
+            border-radius: 8px;
+            display: flex;
+            gap: 4px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            overflow-x: auto; /* Scrollable on mobile */
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .toolbar::-webkit-scrollbar { height: 4px; }
+        .toolbar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+        .tool-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 10px; /* Touch friendly */
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tool-btn:hover { 
+            background-color: rgba(125, 125, 125, 0.1); 
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        /* Workspace Stacking */
+        .workspace {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex: 1;
+        }
+        
+        .pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-paper);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            min-height: 350px;
+        }
+
+        .editor-content {
+            flex: 1;
+            padding: 1rem;
+            outline: none;
+            line-height: 1.6;
+            overflow-y: auto;
+        }
+
+        /* Action Bar */
+        .action-bar {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            padding: 10px 0;
+        }
+
+        .btn {
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            box-shadow: var(--shadow);
+        }
+
+        .btn:hover { transform: scale(1.02); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
+
+        /* --- Desktop Refinements --- */
+        @media (min-width: 992px) {
+            main { padding: 20px; gap: 20px; }
+            .workspace { flex-direction: row; height: calc(100vh - 250px); }
+            .toolbar { flex-wrap: wrap; overflow-x: visible; }
+            .action-bar { display: flex; justify-content: flex-end; }
+            .btn { width: auto; padding: 10px 20px; }
+        }
+
+        /* Keep Rich Text Style Logic */
+        #rich-text-editor table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+        #rich-text-editor th, #rich-text-editor td { border: 1px solid var(--table-border); padding: 8px; }
+        #rich-text-editor pre { background: var(--code-bg); padding: 1rem; border-radius: 6px; overflow-x: auto; }
+        #markdown-editor { background: var(--code-bg); color: var(--text-primary); border: none; resize: none; font-family: 'JetBrains Mono', monospace; }
+    </style>
+</head>
+<body data-theme="light">
+
+    <header>
+        <div class="brand">
+            <span class="material-icons-round">edit_note</span>
+            <span>MD Studio</span>
+        </div>
+        <select class="theme-select" id="themeSwitcher">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+            <option value="dracula">Dracula</option>
+            <option value="solarized">Solarized</option>
+            <option value="midnight">Midnight</option>
+            <option value="forest">Forest</option>
+            <option value="cyberpunk">Cyberpunk</option>
+        </select>
+    </header>
+
+    <main>
+        <div class="toolbar" id="mainToolbar">
+            <button class="tool-btn" onclick="formatDoc('formatBlock', 'h1')"><span class="material-icons-round">looks_one</span></button>
+            <button class="tool-btn" onclick="formatDoc('formatBlock', 'h2')"><span class="material-icons-round">looks_two</span></button>
+            <button class="tool-btn" onclick="formatDoc('bold')"><span class="material-icons-round">format_bold</span></button>
+            <button class="tool-btn" onclick="formatDoc('italic')"><span class="material-icons-round">format_italic</span></button>
+            <div class="divider"></div>
+            <button class="tool-btn" onclick="formatDoc('insertUnorderedList')"><span class="material-icons-round">format_list_bulleted</span></button>
+            <button class="tool-btn" onclick="insertTable()"><span class="material-icons-round">table_chart</span></button>
+            <button class="tool-btn" onclick="insertCodeBlock()"><span class="material-icons-round">code</span></button>
+            <button class="tool-btn" onclick="clearAll()"><span class="material-icons-round">delete_sweep</span></button>
+        </div>
+
+        <div class="workspace">
+            <div class="pane">
+                <div class="pane-header"><span>Visual Editor</span></div>
+                <div id="rich-text-editor" class="editor-content" contenteditable="true">
+                    <h1>Ready to write?</h1>
+                    <p>Paste from <b>ChatGPT</b> or <b>Wikipedia</b> to see the magic.</p>
+                </div>
+            </div>
+
+            <div class="pane">
+                <div class="pane-header"><span>Markdown Output</span></div>
+                <textarea id="markdown-editor" class="editor-content" spellcheck="false"></textarea>
+            </div>
+        </div>
+
+        <div class="action-bar">
+            <button class="btn btn-outline" onclick="copyToClipboard('md')"><span class="material-icons-round">content_copy</span> Copy MD</button>
+            <button class="btn btn-primary" onclick="downloadFile('md')"><span class="material-icons-round">download</span> .md</button>
+        </div>
+    </main>
+
+    <script>
+        const richText = document.getElementById('rich-text-editor');
+        const mdEditor = document.getElementById('markdown-editor');
+        let debounceTimer;
+
+        // --- Turndown Setup ---
+        const turndownService = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced' });
+        turndownService.use(turndownPluginGfm.gfm);
+
+        // --- 1. Smart Paste Handler ---
+        richText.addEventListener('paste', function(e) {
+            e.preventDefault();
+            // Get HTML if available (ChatGPT/Gemini/Wiki)
+            const html = e.clipboardData.getData('text/html');
+            const text = e.clipboardData.getData('text/plain');
+
+            if (html) {
+                // Forces browser to accept the rich structure
+                document.execCommand('insertHTML', false, html);
+            } else {
+                document.execCommand('insertText', false, text);
+            }
+            triggerSync('rich');
+        });
+
+        // --- 2. Debouncing Logic ---
+        function triggerSync(source) {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                if (source === 'rich') {
+                    mdEditor.value = turndownService.turndown(richText.innerHTML);
+                } else {
+                    richText.innerHTML = marked.parse(mdEditor.value);
+                }
+            }, 300); // 300ms delay to prevent glitching
+        }
+
+        richText.addEventListener('input', () => triggerSync('rich'));
+        mdEditor.addEventListener('input', () => triggerSync('md'));
+
+        // --- 3. UI Helpers & Animations ---
+        function copyToClipboard(type) {
+            const content = type === 'md' ? mdEditor.value : richText.innerText;
+            navigator.clipboard.writeText(content).then(() => {
+                const btn = event.currentTarget;
+                btn.classList.add('pulse-animation');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<span class="material-icons-round">done</span> Copied!';
+                setTimeout(() => {
+                    btn.classList.remove('pulse-animation');
+                    btn.innerHTML = originalText;
+                }, 1500);
+            });
+        }
+
+        function formatDoc(cmd, val = null) {
+            document.execCommand(cmd, false, val);
+            triggerSync('rich');
+        }
+
+        function clearAll() {
+            if(confirm("Clear everything?")) {
+                richText.innerHTML = "";
+                mdEditor.value = "";
+            }
+        }
+
+        function downloadFile(ext) {
+            const content = ext === 'md' ? mdEditor.value : richText.innerText;
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `document.${ext}`;
+            a.click();
+        }
+
+        // Theme Switcher
+        document.getElementById('themeSwitcher').addEventListener('change', (e) => {
+            document.body.setAttribute('data-theme', e.target.value);
+        });
+
+        // Initialize
+        triggerSync('rich');
+    </script>
+</body>
+</html>
