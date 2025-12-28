@@ -3,134 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MD Studio</title>
+    <title>MD Studio | Modern Markdown Editor</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
     <script src="https://unpkg.com/turndown/dist/turndown.js"></script>
     <script src="https://unpkg.com/turndown-plugin-gfm/dist/turndown-plugin-gfm.js"></script>
 
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 
     <style>
-        /* --- CSS Variables & Theming --- */
+        /* --- Modern Design System --- */
         :root {
-            --bg-body: #f3f4f6;
+            --bg-body: #f8fafc;
             --bg-paper: #ffffff;
-            --text-primary: #1f2937;
-            --text-secondary: #6b7280;
-            --accent: #2563eb;
-            --accent-hover: #1d4ed8;
-            --border: #e5e7eb;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --accent: #2563eb; 
+            --accent-soft: #dbeafe;
+            --border: #e2e8f0;
             --toolbar-bg: #ffffff;
-            --code-bg: #f8fafc;
-            --table-border: #d1d5db;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --header-height: 70px;
+            --code-bg: #f1f5f9;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --radius: 12px;
         }
 
-        /* [Dark Themes and other color variants remain unchanged as requested] */
-        [data-theme="dark"] { --bg-body: #111827; --bg-paper: #1f2937; --text-primary: #f9fafb; --text-secondary: #9ca3af; --accent: #60a5fa; --accent-hover: #3b82f6; --border: #374151; --toolbar-bg: #1f2937; --code-bg: #111827; --table-border: #4b5563; }
-        [data-theme="dracula"] { --bg-body: #282a36; --bg-paper: #44475a; --text-primary: #f8f8f2; --text-secondary: #bd93f9; --accent: #ff79c6; --accent-hover: #bd93f9; --border: #6272a4; --toolbar-bg: #44475a; --code-bg: #282a36; --table-border: #6272a4; }
-        [data-theme="solarized"] { --bg-body: #fdf6e3; --bg-paper: #eee8d5; --text-primary: #073642; --text-secondary: #586e75; --accent: #d33682; --accent-hover: #dc322f; --border: #93a1a1; --toolbar-bg: #eee8d5; --code-bg: #fdf6e3; --table-border: #93a1a1; }
-        [data-theme="midnight"] { --bg-body: #0f172a; --bg-paper: #1e293b; --text-primary: #e2e8f0; --text-secondary: #94a3b8; --accent: #38bdf8; --accent-hover: #0ea5e9; --border: #334155; --toolbar-bg: #1e293b; --code-bg: #0f172a; --table-border: #475569; }
-        [data-theme="forest"] { --bg-body: #202b25; --bg-paper: #2e3b32; --text-primary: #e8f5e9; --text-secondary: #a5d6a7; --accent: #66bb6a; --accent-hover: #4caf50; --border: #435b48; --toolbar-bg: #2e3b32; --code-bg: #1b241d; --table-border: #435b48; }
-        [data-theme="cyberpunk"] { --bg-body: #000000; --bg-paper: #120024; --text-primary: #00ffea; --text-secondary: #bd00ff; --accent: #ff0055; --accent-hover: #ff2a6d; --border: #bd00ff; --toolbar-bg: #120024; --code-bg: #050505; --table-border: #00ffea; }
+        /* --- Full Theme Suite --- */
+        [data-theme="dark"] { --bg-body: #020617; --bg-paper: #0f172a; --text-primary: #f1f5f9; --text-secondary: #94a3b8; --accent: #3b82f6; --accent-soft: #1e293b; --border: #1e293b; --toolbar-bg: #0f172a; --code-bg: #020617; }
+        [data-theme="dracula"] { --bg-body: #282a36; --bg-paper: #44475a; --text-primary: #f8f8f2; --text-secondary: #bd93f9; --accent: #ff79c6; --accent-soft: #6272a4; --border: #6272a4; --toolbar-bg: #44475a; --code-bg: #282a36; }
+        [data-theme="forest"] { --bg-body: #06150a; --bg-paper: #121d14; --text-primary: #e8f5e9; --text-secondary: #a5d6a7; --accent: #4caf50; --accent-soft: #1b2e21; --border: #2e3b32; --toolbar-bg: #121d14; --code-bg: #06150a; }
+        [data-theme="midnight"] { --bg-body: #000000; --bg-paper: #0a0a0a; --text-primary: #ffffff; --text-secondary: #737373; --accent: #ffffff; --accent-soft: #262626; --border: #262626; --toolbar-bg: #0a0a0a; --code-bg: #000000; }
+        [data-theme="cyberpunk"] { --bg-body: #050005; --bg-paper: #1a001a; --text-primary: #00ffea; --text-secondary: #bd00ff; --accent: #ff0055; --accent-soft: #300030; --border: #bd00ff; --toolbar-bg: #1a001a; --code-bg: #000000; }
 
-        /* --- Reset & Layout --- */
-        * { box-sizing: border-box; transition: background-color 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s; }
+        /* --- Animations & Transitions --- */
+        * { box-sizing: border-box; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes toastIn { from { transform: translate(-50%, 100%); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
         
         body {
             margin: 0;
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-body);
             color: var(--text-primary);
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            animation: fadeIn 0.5s ease-in;
+            overflow: hidden;
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .pulse-animation { animation: pulse 0.4s ease-in-out; }
 
         /* --- Header --- */
         header {
-            height: var(--header-height);
+            height: 70px;
             background-color: var(--bg-paper);
-            padding: 0 1rem;
+            padding: 0 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            z-index: 50;
+        }
+        .brand { font-size: 1.5rem; font-weight: 800; color: var(--accent); display: flex; align-items: center; gap: 12px; letter-spacing: -0.5px; }
+        
+        .theme-select {
+            padding: 10px 16px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--bg-body);
+            color: var(--text-primary);
+            font-weight: 500;
+            cursor: pointer;
+            outline: none;
         }
 
-        /* --- Main Content (Mobile First) --- */
+        /* --- Main Layout --- */
         main {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 10px;
-            gap: 10px;
-            width: 100%;
-            max-width: 1400px;
+            padding: 1.5rem;
+            max-width: 1600px;
             margin: 0 auto;
+            width: 100%;
+            gap: 1.5rem;
+            overflow: hidden;
         }
 
-        /* Responsive Toolbar */
         .toolbar {
             background: var(--toolbar-bg);
-            padding: 8px;
-            border-radius: 8px;
+            padding: 0.75rem;
+            border-radius: var(--radius);
             display: flex;
-            gap: 4px;
+            gap: 0.4rem;
             border: 1px solid var(--border);
-            box-shadow: var(--shadow);
-            overflow-x: auto; /* Scrollable on mobile */
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+            flex-shrink: 0;
+            overflow-x: auto;
         }
-
-        .toolbar::-webkit-scrollbar { height: 4px; }
-        .toolbar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 
         .tool-btn {
             background: transparent;
             border: none;
             color: var(--text-secondary);
             cursor: pointer;
-            padding: 10px; /* Touch friendly */
-            border-radius: 6px;
-            display: inline-flex;
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
             align-items: center;
             justify-content: center;
         }
+        .tool-btn:hover { background-color: var(--accent-soft); color: var(--accent); }
+        .divider { width: 1px; height: 24px; background: var(--border); margin: 0 8px; }
 
-        .tool-btn:hover { 
-            background-color: rgba(125, 125, 125, 0.1); 
-            color: var(--accent);
-            transform: translateY(-2px);
-        }
-
-        /* Workspace Stacking */
         .workspace {
             display: flex;
             flex-direction: column;
-            gap: 15px;
             flex: 1;
+            gap: 1.5rem;
+            min-height: 0;
+            animation: slideUp 0.6s ease-out;
         }
         
         .pane {
@@ -138,195 +132,338 @@
             display: flex;
             flex-direction: column;
             background: var(--bg-paper);
-            border-radius: 12px;
+            border-radius: var(--radius);
             border: 1px solid var(--border);
-            min-height: 350px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+        .pane:focus-within { border-color: var(--accent); box-shadow: var(--shadow-lg); }
+
+        .pane-header {
+            padding: 1rem 1.5rem;
+            background: var(--bg-body);
+            border-bottom: 1px solid var(--border);
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .editor-content {
             flex: 1;
-            padding: 1rem;
-            outline: none;
-            line-height: 1.6;
             overflow-y: auto;
+            padding: 1.5rem;
+            outline: none;
+            line-height: 1.8;
+            font-size: 1rem;
         }
 
-        /* Action Bar */
-        .action-bar {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            padding: 10px 0;
+        #markdown-editor {
+            background: var(--code-bg);
+            color: var(--text-primary);
+            border: none;
+            resize: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
         }
 
+        .pane-actions {
+            padding: 1rem;
+            background: var(--bg-body);
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+
+        /* --- Modern Buttons --- */
         .btn {
-            padding: 12px;
+            padding: 10px 18px;
             border-radius: 8px;
             border: none;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 6px;
+            gap: 8px;
             font-size: 0.85rem;
-            box-shadow: var(--shadow);
+        }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-primary:hover { background: var(--accent-hover); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
+        .btn-outline { background: var(--bg-paper); border: 1px solid var(--border); color: var(--text-primary); }
+        .btn-outline:hover { background: var(--bg-body); border-color: var(--accent); }
+
+        /* --- Toasts --- */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0f172a;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            animation: toastIn 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
         }
 
-        .btn:hover { transform: scale(1.02); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
+        /* --- Editor Styles --- */
+        #rich-text-editor h1 { font-size: 2.5rem; margin-bottom: 1rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
+        #rich-text-editor table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--bg-body); border-radius: 8px; overflow: hidden; }
+        #rich-text-editor th, #rich-text-editor td { border: 1px solid var(--border); padding: 12px 16px; text-align: left; }
+        #rich-text-editor th { background: var(--accent-soft); color: var(--accent); }
+        #rich-text-editor blockquote { margin: 1.5rem 0; padding: 1rem 1.5rem; background: var(--accent-soft); border-left: 4px solid var(--accent); border-radius: 0 8px 8px 0; color: var(--text-primary); font-style: italic; }
+        #rich-text-editor pre { background: var(--code-bg); padding: 1.25rem; border-radius: 8px; border: 1px solid var(--border); overflow-x: auto; }
 
-        /* --- Desktop Refinements --- */
-        @media (min-width: 992px) {
-            main { padding: 20px; gap: 20px; }
-            .workspace { flex-direction: row; height: calc(100vh - 250px); }
-            .toolbar { flex-wrap: wrap; overflow-x: visible; }
-            .action-bar { display: flex; justify-content: flex-end; }
-            .btn { width: auto; padding: 10px 20px; }
+        /* --- Footer --- */
+        footer {
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border);
+            background: var(--bg-paper);
+            letter-spacing: 0.5px;
         }
 
-        /* Keep Rich Text Style Logic */
-        #rich-text-editor table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
-        #rich-text-editor th, #rich-text-editor td { border: 1px solid var(--table-border); padding: 8px; }
-        #rich-text-editor pre { background: var(--code-bg); padding: 1rem; border-radius: 6px; overflow-x: auto; }
-        #markdown-editor { background: var(--code-bg); color: var(--text-primary); border: none; resize: none; font-family: 'JetBrains Mono', monospace; }
+        /* --- Large Screen Adjustments --- */
+        @media (min-width: 1024px) {
+            .workspace { flex-direction: row; }
+            main { padding: 2rem 4rem; }
+        }
+
+        @media (max-width: 768px) {
+            header { padding: 0 1rem; }
+            .brand span { display: none; }
+            .pane-actions { justify-content: stretch; }
+            .btn { flex: 1; }
+        }
     </style>
 </head>
 <body data-theme="light">
 
     <header>
         <div class="brand">
-            <span class="material-icons-round">edit_note</span>
-            <span>MD Studio</span>
+            <span class="material-icons-round">auto_awesome</span>
+            MD Studio
         </div>
         <select class="theme-select" id="themeSwitcher">
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
+            <option value="light">Light Glass</option>
+            <option value="dark">Dark Slate</option>
             <option value="dracula">Dracula</option>
-            <option value="solarized">Solarized</option>
-            <option value="midnight">Midnight</option>
-            <option value="forest">Forest</option>
-            <option value="cyberpunk">Cyberpunk</option>
+            <option value="midnight">OLED Black</option>
+            <option value="forest">Emerald Forest</option>
+            <option value="cyberpunk">Cyber Neon</option>
         </select>
     </header>
 
     <main>
-        <div class="toolbar" id="mainToolbar">
+        <div class="toolbar">
             <button class="tool-btn" onclick="formatDoc('formatBlock', 'h1')"><span class="material-icons-round">looks_one</span></button>
             <button class="tool-btn" onclick="formatDoc('formatBlock', 'h2')"><span class="material-icons-round">looks_two</span></button>
+            <div class="divider"></div>
             <button class="tool-btn" onclick="formatDoc('bold')"><span class="material-icons-round">format_bold</span></button>
             <button class="tool-btn" onclick="formatDoc('italic')"><span class="material-icons-round">format_italic</span></button>
+            <button class="tool-btn" onclick="formatDoc('strikeThrough')"><span class="material-icons-round">strikethrough_s</span></button>
             <div class="divider"></div>
             <button class="tool-btn" onclick="formatDoc('insertUnorderedList')"><span class="material-icons-round">format_list_bulleted</span></button>
+            <button class="tool-btn" onclick="formatDoc('insertOrderedList')"><span class="material-icons-round">format_list_numbered</span></button>
             <button class="tool-btn" onclick="insertTable()"><span class="material-icons-round">table_chart</span></button>
-            <button class="tool-btn" onclick="insertCodeBlock()"><span class="material-icons-round">code</span></button>
-            <button class="tool-btn" onclick="clearAll()"><span class="material-icons-round">delete_sweep</span></button>
+            <div class="divider"></div>
+            <button class="tool-btn" onclick="insertLink()"><span class="material-icons-round">link</span></button>
+            <button class="tool-btn" onclick="insertImage()"><span class="material-icons-round">image</span></button>
+            <button class="tool-btn" onclick="insertCode()"><span class="material-icons-round">code</span></button>
+            <div style="flex:1"></div>
+            <button class="tool-btn" onclick="clearAll()" style="color: #ef4444;"><span class="material-icons-round">delete</span></button>
         </div>
 
         <div class="workspace">
             <div class="pane">
-                <div class="pane-header"><span>Visual Editor</span></div>
+                <div class="pane-header">
+                    Visual Editor
+                    <span class="material-icons-round" style="font-size:16px">brush</span>
+                </div>
                 <div id="rich-text-editor" class="editor-content" contenteditable="true">
-                    <h1>Ready to write?</h1>
-                    <p>Paste from <b>ChatGPT</b> or <b>Wikipedia</b> to see the magic.</p>
+                    <h1>🚀 MD Studio v2.0</h1>
+                    <p>Experience the most <i>advanced</i> and <b>modern</b> Markdown workflow.</p>
+                    <hr>
+                    <h3>📋 Production Checklist</h3>
+                    <ul>
+                        <li>[x] Text formatting: Bold, Italic, Strikethrough</li>
+                        <li>[x] Task lists and Unordered Lists</li>
+                        <li>[ ] Final Export to .md file</li>
+                    </ul>
+                    <h3>📊 Data Verification</h3>
+                    <table>
+                        <thead><tr><th>Feature</th><th>Status</th><th>Notes</th></tr></thead>
+                        <tbody>
+                            <tr><td>Rendering</td><td>✅</td><td>Perfect</td></tr>
+                            <tr><td>Speed</td><td>⚡</td><td>Ultra Fast</td></tr>
+                        </tbody>
+                    </table>
+                    <blockquote>"Simplicity is the soul of efficiency." — Austin Freeman</blockquote>
+                    <p>Explore more: <a href="https://github.com">GitHub Repository</a></p>
+                    <pre><code>function mdStudio() {
+  console.log("Ready for production!");
+}</code></pre>
                 </div>
             </div>
 
             <div class="pane">
-                <div class="pane-header"><span>Markdown Output</span></div>
+                <div class="pane-header">
+                    Markdown Source
+                    <span class="material-icons-round" style="font-size:16px">code</span>
+                </div>
                 <textarea id="markdown-editor" class="editor-content" spellcheck="false"></textarea>
+                <div class="pane-actions">
+                    <button class="btn btn-outline" onclick="copyToClipboard()">
+                        <span class="material-icons-round">content_copy</span> Copy
+                    </button>
+                    <button class="btn btn-primary" onclick="downloadFile('md')">
+                        <span class="material-icons-round">file_download</span> MD
+                    </button>
+                    <button class="btn btn-primary" onclick="downloadFile('txt')">
+                        <span class="material-icons-round">text_snippet</span> TXT
+                    </button>
+                </div>
             </div>
         </div>
-
-        <div class="action-bar">
-            <button class="btn btn-outline" onclick="copyToClipboard('md')"><span class="material-icons-round">content_copy</span> Copy MD</button>
-            <button class="btn btn-primary" onclick="downloadFile('md')"><span class="material-icons-round">download</span> .md</button>
-        </div>
     </main>
+
+    <div id="toast">
+        <span class="material-icons-round" id="toastIcon">check_circle</span>
+        <span id="toastMsg">Action Successful</span>
+    </div>
+
+    <footer>
+        &copy; 2025 MD Studio &bull; Made with ❤️ by Aliriyaj007
+    </footer>
 
     <script>
         const richText = document.getElementById('rich-text-editor');
         const mdEditor = document.getElementById('markdown-editor');
+        const themeSwitcher = document.getElementById('themeSwitcher');
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toastMsg');
         let debounceTimer;
 
-        // --- Turndown Setup ---
-        const turndownService = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced' });
+        // Initialize Turndown (HTML -> MD)
+        const turndownService = new TurndownService({ 
+            headingStyle: 'atx', 
+            codeBlockStyle: 'fenced',
+            hr: '---'
+        });
         turndownService.use(turndownPluginGfm.gfm);
 
-        // --- 1. Smart Paste Handler ---
-        richText.addEventListener('paste', function(e) {
-            e.preventDefault();
-            // Get HTML if available (ChatGPT/Gemini/Wiki)
-            const html = e.clipboardData.getData('text/html');
-            const text = e.clipboardData.getData('text/plain');
-
-            if (html) {
-                // Forces browser to accept the rich structure
-                document.execCommand('insertHTML', false, html);
-            } else {
-                document.execCommand('insertText', false, text);
-            }
-            triggerSync('rich');
+        // Initialize Marked (MD -> HTML)
+        marked.setOptions({
+            gfm: true,
+            breaks: true,
+            tasklists: true
         });
 
-        // --- 2. Debouncing Logic ---
-        function triggerSync(source) {
+        function showToast(msg) {
+            toastMsg.innerText = msg;
+            toast.style.display = 'flex';
+            setTimeout(() => { toast.style.display = 'none'; }, 2500);
+        }
+
+        function debounceConvert(direction) {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
-                if (source === 'rich') {
+                if (direction === 'toMd') {
                     mdEditor.value = turndownService.turndown(richText.innerHTML);
                 } else {
                     richText.innerHTML = marked.parse(mdEditor.value);
                 }
-            }, 300); // 300ms delay to prevent glitching
+            }, 250);
         }
 
-        richText.addEventListener('input', () => triggerSync('rich'));
-        mdEditor.addEventListener('input', () => triggerSync('md'));
+        richText.addEventListener('input', () => debounceConvert('toMd'));
+        mdEditor.addEventListener('input', () => debounceConvert('toRich'));
 
-        // --- 3. UI Helpers & Animations ---
-        function copyToClipboard(type) {
-            const content = type === 'md' ? mdEditor.value : richText.innerText;
-            navigator.clipboard.writeText(content).then(() => {
-                const btn = event.currentTarget;
-                btn.classList.add('pulse-animation');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '<span class="material-icons-round">done</span> Copied!';
-                setTimeout(() => {
-                    btn.classList.remove('pulse-animation');
-                    btn.innerHTML = originalText;
-                }, 1500);
-            });
-        }
+        // Smart Paste
+        richText.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const html = e.clipboardData.getData('text/html');
+            const text = e.clipboardData.getData('text/plain');
+            if(html) document.execCommand('insertHTML', false, html);
+            else document.execCommand('insertText', false, text);
+            debounceConvert('toMd');
+        });
 
         function formatDoc(cmd, val = null) {
             document.execCommand(cmd, false, val);
-            triggerSync('rich');
+            richText.focus();
+            debounceConvert('toMd');
         }
 
-        function clearAll() {
-            if(confirm("Clear everything?")) {
-                richText.innerHTML = "";
-                mdEditor.value = "";
+        function insertTable() {
+            const html = `<table><thead><tr><th>H1</th><th>H2</th></tr></thead><tbody><tr><td>Cell</td><td>Cell</td></tr></tbody></table><p></p>`;
+            document.execCommand('insertHTML', false, html);
+            debounceConvert('toMd');
+        }
+
+        function insertLink() {
+            const url = prompt('Enter URL:');
+            if(url) formatDoc('createLink', url);
+        }
+
+        function insertImage() {
+            const url = prompt('Image URL:');
+            if(url) formatDoc('insertImage', url);
+        }
+
+        function insertCode() {
+            const code = prompt('Enter code snippet:');
+            if(code) {
+                const html = `<pre><code>${code}</code></pre><p><br></p>`;
+                document.execCommand('insertHTML', false, html);
+                debounceConvert('toMd');
             }
         }
 
+        function copyToClipboard() {
+            mdEditor.select();
+            document.execCommand('copy');
+            showToast('Copied to clipboard successfully!');
+        }
+
         function downloadFile(ext) {
-            const content = ext === 'md' ? mdEditor.value : richText.innerText;
-            const blob = new Blob([content], { type: 'text/plain' });
+            const content = mdEditor.value;
+            const blob = new Blob([content], { type: 'text/markdown' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `document.${ext}`;
+            a.download = `md_studio_export.${ext}`;
             a.click();
+            showToast(`${ext.toUpperCase()} Downloaded successfully!`);
         }
 
-        // Theme Switcher
-        document.getElementById('themeSwitcher').addEventListener('change', (e) => {
+        function clearAll() {
+            if(confirm('Are you sure you want to clear everything?')) {
+                richText.innerHTML = '';
+                mdEditor.value = '';
+                debounceConvert('toMd');
+            }
+        }
+
+        themeSwitcher.addEventListener('change', (e) => {
             document.body.setAttribute('data-theme', e.target.value);
         });
 
-        // Initialize
-        triggerSync('rich');
+        // Initialize view
+        debounceConvert('toMd');
     </script>
 </body>
 </html>
+
